@@ -126,6 +126,14 @@ class Regex
      */
     public function tableAlias(string $subject, &$matches = null)
     {
+        if (
+            preg_match(
+                '/^\s*(\(.*\))\s+(?:AS\s+)?([' . self::SQLCHARS . ']+)\s+ON\s/uis',
+                $subject,
+                $matches
+            )
+        )
+            return 1;
         return preg_match(
             '/`?([' . self::SQLCHARS . ']+[.:]?[' . self::SQLCHARS . '*]*)`?(\s+AS)?(\s+`?([' . self::SQLCHARS . ']*)`?)?/ui',
             $subject,
