@@ -285,4 +285,20 @@ class SelectTest extends TestCase
         self::assertEquals(false, $statement);
         self::assertEquals(false, $statement2);
     }
+
+    public function testMulitpleSubselectJoinClauses(): void
+    {
+        $query = $this->fluent->from('user')
+            -> disableSmartJoin()
+            -> leftJoin(
+                "(SELECT user_id, count(*) AS count FROM comment GROUP BY user_id) comments ON user.id = comments.user_id"
+            )
+            -> leftJoin(
+                "(SELECT user_id, count(*) AS count FROM article GROUP BY user_id) articles ON user.id = articles.user_id"
+            )
+            ->select("comments.count AS total_comments")
+            ->select("articles.count AS total_articles");
+        self::assertEquals('SELECT user.*, comments.count AS total_comments, articles.count AS total_articles FROM user LEFT JOIN (SELECT user_id, count(*) AS count FROM comment GROUP BY user_id) comments ON user.id = comments.user_id  LEFT JOIN (SELECT user_id, count(*) AS count FROM article GROUP BY user_id) articles ON user.id = articles.user_id',
+        $query->getQuery(false));
+    }
 }
