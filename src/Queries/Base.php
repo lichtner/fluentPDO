@@ -174,7 +174,7 @@ abstract class Base implements IteratorAggregate
      * @throws Exception
      */
     #[\ReturnTypeWillChange]
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return $this->execute();
     }
